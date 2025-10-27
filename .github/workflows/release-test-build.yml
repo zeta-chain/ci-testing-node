@@ -13,13 +13,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history including tags
 
       - name: Generate release identifier
         id: release_id
         run: |
           DATE=$(date +%Y%m%d)
           SHORT_HASH=${GITHUB_SHA:0:7}
-          RELEASE_ID="test-${DATE}-${SHORT_HASH}"
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          RELEASE_ID="${LATEST_TAG}-${DATE}-${SHORT_HASH}"
           echo "release_id=${RELEASE_ID}" >> $GITHUB_OUTPUT
           echo "Release identifier: ${RELEASE_ID}"
 
