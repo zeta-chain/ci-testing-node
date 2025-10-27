@@ -13,18 +13,22 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Fetch all history including tags
 
       - name: Generate release identifier
         id: release_id
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           DATE=$(date +%Y%m%d)
           SHORT_HASH=${GITHUB_SHA:0:7}
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          LATEST_TAG=$(gh release view --json tagName --jq '.tagName' 2>/dev/null || echo "v0.0.0")
+          if [ -z "$LATEST_TAG" ]; then
+            LATEST_TAG="v0.0.0"
+          fi
           RELEASE_ID="${LATEST_TAG}-${DATE}-${SHORT_HASH}"
           echo "release_id=${RELEASE_ID}" >> $GITHUB_OUTPUT
           echo "Release identifier: ${RELEASE_ID}"
+          echo "Latest release tag: ${LATEST_TAG}"
 
       - name: Build release artifacts
         run: |
