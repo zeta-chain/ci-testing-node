@@ -1,7 +1,10 @@
-name: Release to Test Binaries
+name: Release Test Binaries to Cloudflare R2
 
 on:
   workflow_dispatch:
+  # push:
+  #   branches:
+  #     - ci-test-binaries # temp trigger
 
 jobs:
   build-and-upload:
@@ -16,12 +19,18 @@ jobs:
         run: |
           DATE=$(date +%Y%m%d)
           SHORT_HASH=${GITHUB_SHA:0:7}
-          RELEASE_ID="${DATE}-${SHORT_HASH}"
+          RELEASE_ID="test-${DATE}-${SHORT_HASH}"
           echo "release_id=${RELEASE_ID}" >> $GITHUB_OUTPUT
           echo "Release identifier: ${RELEASE_ID}"
 
       - name: Build release artifacts
-        run: make release-snapshot
+        run: |
+          mkdir -p upload/zetacore
+          mkdir -p upload/zetaclient
+          make release-snapshot-zetacore
+          mv dist/* upload/zetacore/
+          make release-snapshot-zetaclient
+          mv dist/* upload/zetaclient/
 
       - name: Configure AWS CLI for Cloudflare R2
         env:
@@ -40,7 +49,7 @@ jobs:
           RELEASE_ID: ${{ steps.release_id.outputs.release_id }}
         run: |
           echo "Uploading artifacts to R2 bucket: ${R2_BUCKET_NAME}/${RELEASE_ID}/"
-          aws s3 sync dist/ "s3://${R2_BUCKET_NAME}/${RELEASE_ID}/" \
+          aws s3 sync upload/ "s3://${R2_BUCKET_NAME}/${RELEASE_ID}/" \
             --endpoint-url "https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com" \
             --no-progress
           echo "✓ Upload complete"
