@@ -28,9 +28,9 @@ jobs:
           mkdir -p upload/zetacore
           mkdir -p upload/zetaclient
           make release-snapshot-zetacore
-          cp dist/* upload/zetacore/
+          cp -r dist/* upload/zetacore/
           make release-snapshot-zetaclient
-          cp dist/* upload/zetaclient/
+          cp -r dist/* upload/zetaclient/
 
       - name: Configure AWS CLI for Cloudflare R2
         env:
