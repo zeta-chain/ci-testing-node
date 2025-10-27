@@ -21,7 +21,7 @@ jobs:
           echo "Release identifier: ${RELEASE_ID}"
 
       - name: Build release artifacts
-        run: make release-build-only
+        run: make release-snapshot
 
       - name: Configure AWS CLI for Cloudflare R2
         env:
