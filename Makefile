@@ -514,10 +514,10 @@ test-sim-after-import-long
 ###############################################################################
 
 release-snapshot-zetacore:
-	$(GORELEASER) --config .goreleaser-zetacore.yaml --clean --skip=validate --skip=publish --snapshot
+	$(GORELEASER) --config .goreleaser-zetacore.yaml --clean --skip=validate --skip=publish --snapshot $(EXTRA_GORELEASER_ARGS)
 
 release-snapshot-zetaclient:
-	$(GORELEASER) --config .goreleaser-zetaclient.yaml --clean --skip=validate --skip=publish --snapshot
+	$(GORELEASER) --config .goreleaser-zetaclient.yaml --clean --skip=validate --skip=publish --snapshot $(EXTRA_GORELEASER_ARGS)
 
 release-zetacore:
 	@if [ ! -f ".release-env" ]; then \
