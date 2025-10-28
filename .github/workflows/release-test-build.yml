@@ -75,7 +75,7 @@ jobs:
 
       - name: Build zetacore artifacts
         run: |
-          make release-snapshot-zetacore EXTRA_GORELEASER_ARGS="--dist dist-zetacore"
+          make release-snapshot-zetacore
 
       - name: Configure AWS CLI for Cloudflare R2
         env:
@@ -94,14 +94,14 @@ jobs:
           RELEASE_ID: ${{ needs.prepare-release.outputs.release_id }}
         run: |
           echo "Uploading zetacore artifacts to R2 bucket: ${R2_BUCKET_NAME}/${RELEASE_ID}/zetacored/"
-          aws s3 sync dist-zetacore/ "s3://${R2_BUCKET_NAME}/${RELEASE_ID}/zetacored/" \
+          aws s3 sync dist/ "s3://${R2_BUCKET_NAME}/${RELEASE_ID}/zetacored/" \
             --endpoint-url "https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com" \
             --no-progress
           echo "✓ Zetacore upload complete"
 
       - name: Clean up workspace
         if: always()
-        run: sudo rm -rf dist-zetacore/ || echo "Failed to cleanup workspace"
+        run: sudo rm -rf dist/ || echo "Failed to cleanup workspace"
 
   build-zetaclient:
     needs: prepare-release
@@ -113,7 +113,7 @@ jobs:
 
       - name: Build zetaclient artifacts
         run: |
-          make release-snapshot-zetaclient EXTRA_GORELEASER_ARGS="--dist dist-zetaclient"
+          make release-snapshot-zetaclient
 
       - name: Configure AWS CLI for Cloudflare R2
         env:
@@ -132,14 +132,14 @@ jobs:
           RELEASE_ID: ${{ needs.prepare-release.outputs.release_id }}
         run: |
           echo "Uploading zetaclient artifacts to R2 bucket: ${R2_BUCKET_NAME}/${RELEASE_ID}/zetaclientd/"
-          aws s3 sync dist-zetaclient/ "s3://${R2_BUCKET_NAME}/${RELEASE_ID}/zetaclientd/" \
+          aws s3 sync dist/ "s3://${R2_BUCKET_NAME}/${RELEASE_ID}/zetaclientd/" \
             --endpoint-url "https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com" \
             --no-progress
           echo "✓ Zetaclient upload complete"
 
       - name: Clean up workspace
         if: always()
-        run: sudo rm -rf dist-zetaclient/ || echo "Failed to cleanup workspace"
+        run: sudo rm -rf dist/ || echo "Failed to cleanup workspace"
 
   notify:
     needs: [prepare-release, build-zetacore, build-zetaclient]
