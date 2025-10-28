@@ -173,7 +173,7 @@ jobs:
           R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
         run: |
-          R2_URL="https://dash.cloudflare.com/${R2_ACCOUNT_ID}/r2/default/buckets/${R2_BUCKET_NAME}/objects/${RELEASE_ID}"
+          R2_URL="https://dash.cloudflare.com/${R2_ACCOUNT_ID}/r2/default/buckets/${R2_BUCKET_NAME}?prefix=${RELEASE_ID}/"
           echo "## Release Upload Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Release ID**: \`${RELEASE_ID}\`" >> $GITHUB_STEP_SUMMARY
@@ -197,4 +197,4 @@ jobs:
               - type: "section"
                 text:
                   type: "mrkdwn"
-                  text: "*Test binaries have been uploaded to Cloudflare R2*\n*Release ID:* `${{ needs.prepare-release.outputs.release_id }}`\n*Path:* `${{ secrets.R2_BUCKET_NAME }}/${{ needs.prepare-release.outputs.release_id }}/`\n*Commit:* `${{ github.sha }}`\n*Repository:* ${{ github.repository }}\n*Triggered by:* ${{ github.actor }}\n\n<https://dash.cloudflare.com/${{ secrets.R2_ACCOUNT_ID }}/r2/default/buckets/${{ secrets.R2_BUCKET_NAME }}/objects/${{ needs.prepare-release.outputs.release_id }}|View in Cloudflare R2 Dashboard>"
+                  text: "*Test binaries have been uploaded to Cloudflare R2*\n*Release ID:* `${{ needs.prepare-release.outputs.release_id }}`\n*Path:* `${{ secrets.R2_BUCKET_NAME }}/${{ needs.prepare-release.outputs.release_id }}/`\n*Commit:* `${{ github.sha }}`\n*Repository:* ${{ github.repository }}\n*Triggered by:* ${{ github.actor }}\n\n<https://dash.cloudflare.com/${{ secrets.R2_ACCOUNT_ID }}/r2/default/buckets/${{ secrets.R2_BUCKET_NAME }}?prefix=${{ needs.prepare-release.outputs.release_id }}/|View in Cloudflare R2 Dashboard>"
