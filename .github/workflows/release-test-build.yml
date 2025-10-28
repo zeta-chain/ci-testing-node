@@ -100,22 +100,17 @@ jobs:
           echo "All artifacts from \`dist/\` have been uploaded to Cloudflare R2." >> $GITHUB_STEP_SUMMARY
 
       - name: Notify Slack
-        uses: slackapi/slack-github-action@v1.27.0
+        uses: slackapi/slack-github-action@v2.1.1
         with:
-          webhook-url: ${{ secrets.SLACK_WEBHOOK_CI_ALERTS }}
+          webhook: ${{ secrets.SLACK_WEBHOOK_CI_ALERTS }}
+          webhook-type: incoming-webhook
           payload: |
-            {
-              "text": "Test binaries uploaded to R2: `${{ steps.release_id.outputs.release_id }}`",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Test binaries have been uploaded to Cloudflare R2*\n*Release ID:* `${{ steps.release_id.outputs.release_id }}`\n*Path:* `${{ secrets.R2_BUCKET_NAME }}/${{ steps.release_id.outputs.release_id }}/`\n*Commit:* `${{ github.sha }}`\n*Repository:* ${{ github.repository }}\n*Triggered by:* ${{ github.actor }}"
-                  }
-                }
-              ]
-            }
+            text: "Test binaries uploaded to R2: `${{ steps.release_id.outputs.release_id }}`"
+            blocks:
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "*Test binaries have been uploaded to Cloudflare R2*\n*Release ID:* `${{ steps.release_id.outputs.release_id }}`\n*Path:* `${{ secrets.R2_BUCKET_NAME }}/${{ steps.release_id.outputs.release_id }}/`\n*Commit:* `${{ github.sha }}`\n*Repository:* ${{ github.repository }}\n*Triggered by:* ${{ github.actor }}"
 
       - name: Clean up workspace
         if: always()
