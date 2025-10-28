@@ -27,15 +27,6 @@ jobs:
           echo "Release identifier: ${RELEASE_ID}"
           echo "Latest release tag: ${LATEST_TAG}"
 
-      - name: Build release artifacts
-        run: |
-          mkdir -p upload/zetacore
-          mkdir -p upload/zetaclient
-          make release-snapshot-zetacore
-          cp -r dist/* upload/zetacore/
-          make release-snapshot-zetaclient
-          cp -r dist/* upload/zetaclient/
-
       - name: Configure AWS CLI for Cloudflare R2
         env:
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
@@ -60,6 +51,15 @@ jobs:
             exit 1
           fi
           echo "Release ID is unique, proceeding with upload"
+
+      - name: Build release artifacts
+        run: |
+          mkdir -p upload/zetacore
+          mkdir -p upload/zetaclient
+          make release-snapshot-zetacore
+          cp -r dist/* upload/zetacore/
+          make release-snapshot-zetaclient
+          cp -r dist/* upload/zetaclient/
 
       - name: Upload to Cloudflare R2
         env:
